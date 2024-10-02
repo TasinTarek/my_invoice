@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Form View -->
+        <record id="account_move_inherited_form_view_smartedu_core" model="ir.ui.view">
+            <field name="name">account.move.inherited.form.view.smartedu.core</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="after">
+                    <field name="decision_date"/>
+                    <field name="decision_number"/>
+                </xpath>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="custom_external_layout_standard" inherit_id="web.external_layout_standard">
+        <xpath expr="//div[@t-attf-class='header o_company_#{company.id}_layout']" position="replace">
+            <div class="header o_standard_header">
+                <div class="d-flex justify-content-between" style="report_header_style">
+                    <div>
+                        <t t-if="o.company_id.logo">
+                              <img t-att-src="image_data_uri(o.company_id.logo)" style="width:120px; height:100px"/>
+                        </t>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold">
+                            Invoice
+                        </h3>
+                    </div>
+                    <div>
+                        <small>
+                            <span class="page"/>
+                            <span class="topage"/>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@t-attf-class='footer o_standard_footer o_company_#{company.id}_layout']" position="replace">
+            <div class="footer o_standard_footer border-top border-1 border-dark">
+                <div class="row mt-5 mx-1">
+                    <t t-foreach="docs" t-as="o">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td width="7%" class="text-end">Recipents account number</td>
+                                    <td>IBAN</td>
+                                    <td></td>
+                                    <td rowspan="2" colspan="4">
+                                        <small>BIC</small><br/>
+                                        <t t-foreach="o.partner_id.bank_ids.bank_id" t-as="bank">
+                                            <t t-esc="bank.bic"/>
+                                        </t>
+                                        <br/>
+                                        <br/>
+                                        <span class="fw-light me-1">Invoice Number</span><t t-esc="o.name"/>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <span class="fw-light">Use a reference number when paying</span>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <span class="fw-light">Virtual bar code</span>
+                                        <br/>
+                                        <span class="fw-light">1234567899876354321</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="7%" class="text-end">Recipent</td>
+                                    <td colspan="2">
+                                        Customs
+                                        <br/>
+                                        P.O. Box 512
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"></td>
+                                    <td>
+                                        <small>Ref No.</small>
+                                    </td>
+                                    <td colspan="2">
+                                        <t t-esc="o.payment_reference"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4"></td>
+                                    <td>
+                                        <small>Due Date</small>
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.invoice_date_due"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="o.amount_residual"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+    
+                        <div class="d-flex justify-content-between">
+                            <span t-field="o.name" t-options="{'widget': 'barcode', 'humanreadable': 1, 'width': 400, 'height': 100}"/>
+                            <p>
+                                The payment will be cleared for the recipent in<br/>
+                                accordance with the General terms for payment<br/>
+                                transmission and only on the basis of the account<br/>
+                                number given by the payer.
+                            </p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

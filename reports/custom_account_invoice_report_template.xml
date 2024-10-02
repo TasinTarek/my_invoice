@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="my_external_layout">
+        <div class="header o_standard_header">
+            <div class="d-flex justify-content-between" style="report_header_style">
+                <div>
+                    <t t-if="o.company_id.logo">
+                          <img t-att-src="image_data_uri(o.company_id.logo)" style="width:120px; height:100px"/>
+                    </t>
+                </div>
+                <div>
+                    <h3 class="fw-bold">
+                        Invoice
+                    </h3>
+                </div>
+                <div>
+                    <small>
+                        <span class="page"/>
+                        <span class="topage"/>
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard">
+            <t t-out="0"/>
+        </div>
+        <div class="footer o_standard_footer border-top border-1 border-dark">
+            <div class="row mt-5 mx-1">
+                <t t-foreach="docs" t-as="o">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td width="7%" class="text-end">Recipents account number</td>
+                                <td>IBAN</td>
+                                <td></td>
+                                <td rowspan="2" colspan="4">
+                                    <small>BIC</small><br/>
+                                    <t t-foreach="o.partner_id.bank_ids.bank_id" t-as="bank">
+                                        <t t-esc="bank.bic"/>
+                                    </t>
+                                    <br/>
+                                    <br/>
+                                    <span class="fw-light me-1">Invoice Number</span><t t-esc="o.name"/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <span class="fw-light">Use a reference number when paying</span>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <span class="fw-light">Virtual bar code</span>
+                                    <br/>
+                                    <span class="fw-light">1234567899876354321</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="7%" class="text-end">Recipent</td>
+                                <td colspan="2">
+                                    Customs
+                                    <br/>
+                                    P.O. Box 512
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"></td>
+                                <td>
+                                    <small>Ref No.</small>
+                                </td>
+                                <td colspan="2">
+                                    <t t-esc="o.payment_reference"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"></td>
+                                <td>
+                                    <small>Due Date</small>
+                                </td>
+                                <td>
+                                    <t t-esc="o.invoice_date_due"/>
+                                </td>
+                                <td>
+                                    <t t-esc="o.amount_residual"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-between">
+                        <span t-field="o.name" t-options="{'widget': 'barcode', 'humanreadable': 1, 'width': 400, 'height': 100}"/>
+                        <p>
+                            The payment will be cleared for the recipent in<br/>
+                            accordance with the General terms for payment<br/>
+                            transmission and only on the basis of the account<br/>
+                            number given by the payer.
+                        </p>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+
+    <template id="custom_account_invoice_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="my_invoice.my_external_layout">
+                    <div class="my-1">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td width="50%" rowspan="3"><small class="fw-bold">Invoicing Address</small><br/>
+                                        <t t-esc="o.partner_id.street"/><br/>
+                                        <t t-if="o.partner_id.street2">
+                                            <t t-esc="o.partner_id.street2"/><br/>                                            
+                                        </t>
+                                        <t t-esc="o.partner_id.city"/>
+                                        <t t-esc="o.partner_id.state_id.name"/>
+                                        <t t-esc="o.partner_id.zip"/><br/>
+                                        <t t-esc="o.partner_id.country_id.name"/>
+                                    </td>
+                                    <td><small class="fw-bold">Invoice Number</small><br/>
+                                        <t t-esc="o.name"/>
+                                    </td>
+                                    <td><small class="fw-bold">Invoice Date</small><br/>
+                                        <t t-esc="o.invoice_date"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><small class="fw-bold">Decision Number</small><br/>
+                                        <t t-esc="o.decision_number"/>
+                                    </td>
+                                    <td><small class="fw-bold">Date of decision</small><br/>
+                                        <t t-esc="o.decision_date"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><small class="fw-bold">Due Date</small><br/>
+                                        <t t-esc="o.invoice_date_due"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="my-1">
+                        <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Product</th>
+                                        <th>Units</th>
+                                        <th>Price</th>
+                                        <th class="text-end pe-0">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.invoice_line_ids" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <t t-esc="line.product_id.code"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.product_id.name"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.quantity"/>
+                                            </td>
+                                            <td>
+                                                <t t-esc="line.price_unit"/>
+                                            </td>
+                                            <td align="right" class="pe-0">
+                                                <t t-esc="line.price_subtotal"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div>
+                                <p class="fw-bold">Declarant</p>
+                                <t t-esc="o.narration"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex justify-content-between border-top">
+                                <p class="fw-light">Untaxed Amount</p>
+                                <t t-esc="o.amount_untaxed"/>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p class="fw-light">Tax</p>
+                                <t t-esc="o.amount_tax"/>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <p class="fw-light">Total</p>
+                                <t t-esc="o.amount_total"/>
+                            </div>       
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
